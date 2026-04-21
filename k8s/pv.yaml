@@ -4,9 +4,10 @@ metadata:
   name: gitea-pv
 spec:
   capacity:
-    storage: 100Gi
+    storage: 10Gi
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
   hostPath:
     path: /mnt/usb/gitea

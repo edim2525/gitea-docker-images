@@ -6,7 +6,8 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
+  storageClassName: ""
   resources:
     requests:
-      storage: 100Gi
+      storage: 10Gi
   volumeName: gitea-pv
