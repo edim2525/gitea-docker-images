@@ -5,14 +5,61 @@ Storage backed by a USB drive mounted at `/mnt/usb`.
 
 ---
 
-## Deployment
+## Repository Structure
+
+```
+.
+├── application.yaml        # ArgoCD Application manifest
+├── README.md
+└── k8s/
+    ├── namespace.yaml      # Gitea namespace
+    ├── pv.yaml             # PersistentVolume (USB drive)
+    ├── pvc.yaml            # PersistentVolumeClaim
+    ├── deployment.yaml     # Gitea Deployment
+    └── service.yaml        # NodePort Service
+```
+
+---
+
+## Deployment via ArgoCD (Recommended)
+
+ArgoCD watches the `k8s/` folder in the `main` branch and auto-deploys on every git push.
+
+### Step 1: Prepare the USB directory on the Pi
+```bash
+mkdir -p /mnt/usb/gitea
+```
+
+### Step 2: Push manifests to GitHub
+```bash
+git add k8s/ application.yaml
+git commit -m "Add Gitea manifests"
+git push origin main
+```
+
+### Step 3: Register the app in ArgoCD
+```bash
+kubectl apply -f application.yaml
+```
+
+### Step 4: Watch ArgoCD sync
+```bash
+kubectl get application gitea -n argocd
+# Or open the ArgoCD UI at https://<pi-ip>:30443
+```
+
+ArgoCD will automatically create the namespace, deploy all resources, and keep them in sync with git.
+
+---
+
+## Manual Deployment (without ArgoCD)
 
 ```bash
 # Create the Gitea data directory on the USB drive
 mkdir -p /mnt/usb/gitea
 
 # Deploy all resources
-kubectl apply -f gitea.yaml
+kubectl apply -f k8s/
 
 # Watch the pod start
 kubectl get pods -n gitea -w
